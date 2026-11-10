@@ -16,27 +16,42 @@ export const AuthProvider = ({ children }) => {
 
   // Check existing login session
   useEffect(() => {
+    let isMounted = true;
+
     const checkAuth = async () => {
       try {
         const result = await api.get('/auth/me');
 
-        if (result.success) {
-          setUser(result.data);
-        } else {
+        if (isMounted && result.success) {
+          // Handle both possible response structures
+          const userData = result.data?.user || result.data;
+          setUser(userData || null);
+        } else if (isMounted) {
           setUser(null);
         }
       } catch (error) {
-        setUser(null);
-        console.error('Session validation failed:', error.message);
+        if (isMounted) {
+          setUser(null);
+          console.error(
+            'Session validation failed:',
+            error.response?.data?.message || error.message
+          );
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     checkAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // Dynamic login
+  // Login
   const login = async (email, password) => {
     const result = await api.post('/auth/login', {
       email: email.trim().toLowerCase(),
@@ -59,7 +74,10 @@ export const AuthProvider = ({ children }) => {
     try {
       await api.post('/auth/logout');
     } catch (error) {
-      console.error('Logout API error:', error.message);
+      console.error(
+        'Logout API error:',
+        error.response?.data?.message || error.message
+      );
     } finally {
       setUser(null);
     }
@@ -104,3 +122,5 @@ export const useAuth = () => {
 
   return context;
 };
+
+export default AuthContext;

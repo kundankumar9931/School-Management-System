@@ -1,9 +1,11 @@
+
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
+
 import { env } from './config/env.js';
 import { swaggerSpec } from './config/swagger.js';
 import apiRoutes from './routes/index.js';
@@ -14,26 +16,22 @@ const app = express();
 // Security middleware
 app.use(
   helmet({
-    contentSecurityPolicy: false, // Allows Swagger UI and local development
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: {
+      policy: 'cross-origin',
+    },
   })
 );
 
+// CORS configuration
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman) or matching client URL
-      if (!origin || origin === env.CLIENT_URL || origin.includes('localhost')) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Permissive in dev/assessment
-      }
-    },
+    origin: env.CLIENT_URL,
     credentials: true,
   })
 );
 
-// Rate limiting (generous for testing, secure for production)
+// Rate limiting
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -63,22 +61,23 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
-// Interactive Swagger UI documentation
+// Swagger documentation
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Health check endpoint
+// Health check
 app.get('/health', (req, res) => {
-  res.json({
+  res.status(200).json({
+    success: true,
     status: 'healthy',
     timestamp: new Date().toISOString(),
     env: env.NODE_ENV,
   });
 });
 
-// Mount Central API Routes
+// API routes
 app.use('/api', apiRoutes);
 
-// Error Handling Middleware
+// 404 and error handlers
 app.use(notFoundHandler);
 app.use(errorHandler);
 

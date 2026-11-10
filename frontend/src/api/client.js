@@ -1,8 +1,11 @@
 
 import axios from 'axios';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Backend API URL
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:5000/api'
+).replace(/\/+$/, '');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -10,6 +13,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 30000,
 });
 
 // Response interceptor
@@ -31,6 +35,12 @@ api.interceptors.response.use(
     ) {
       window.location.href = '/login';
     }
+
+    console.error('API Error:', {
+      url: error.config?.url,
+      status,
+      message,
+    });
 
     return Promise.reject(new Error(message));
   }
