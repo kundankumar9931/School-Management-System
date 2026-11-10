@@ -1,7 +1,6 @@
 
 import axios from 'axios';
 
-// Backend API URL
 const API_BASE_URL = (
   import.meta.env.VITE_API_URL ||
   'http://localhost:5000/api'
@@ -28,21 +27,15 @@ api.interceptors.response.use(
       error.message ||
       'An unexpected error occurred';
 
-    // Handle unauthorized requests
-    if (
-      status === 401 &&
-      !window.location.pathname.includes('/login')
-    ) {
-      window.location.href = '/login';
-    }
-
     console.error('API Error:', {
       url: error.config?.url,
+      method: error.config?.method,
       status,
       message,
+      response: error.response?.data,
     });
 
-    return Promise.reject(new Error(message));
+    return Promise.reject(error);
   }
 );
 
