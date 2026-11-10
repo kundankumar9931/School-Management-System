@@ -19,23 +19,39 @@ export const AuthProvider = ({ children }) => {
     let isMounted = true;
 
     const checkAuth = async () => {
+      const token = sessionStorage.getItem('token');
+
+      // No saved token means user is not logged in
+      if (!token) {
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
+        }
+        return;
+      }
+
       try {
         const result = await api.get('/auth/me');
 
         if (isMounted && result.success) {
-          // Handle both possible response structures
           const userData = result.data?.user || result.data;
           setUser(userData || null);
         } else if (isMounted) {
+          sessionStorage.removeItem('token');
           setUser(null);
         }
       } catch (error) {
         if (isMounted) {
-          setUser(null);
           console.error(
             'Session validation failed:',
             error.response?.data?.message || error.message
           );
+
+          if (error.response?.status === 401) {
+            sessionStorage.removeItem('token');
+          }
+
+          setUser(null);
         }
       } finally {
         if (isMounted) {
@@ -53,20 +69,33 @@ export const AuthProvider = ({ children }) => {
 
   // Login
   const login = async (email, password) => {
-    const result = await api.post('/auth/login', {
-      email: email.trim().toLowerCase(),
-      password,
-    });
+    try {
+      const result = await api.post('/auth/login', {
+        email: email.trim().toLowerCase(),
+        password,
+      });
 
-    if (!result.success || !result.data?.user) {
-      throw new Error(result.message || 'Login failed');
+      if (!result.success || !result.data?.token || !result.data?.user) {
+        throw new Error(result.message || 'Login failed');
+      }
+
+      const { token, user: userData } = result.data;
+
+      // Save token for future API requests
+      sessionStorage.setItem('token', token);
+
+      setUser(userData);
+
+      return userData;
+    } catch (error) {
+      sessionStorage.removeItem('token');
+
+      throw new Error(
+        error.response?.data?.message ||
+        error.message ||
+        'Login failed'
+      );
     }
-
-    const userData = result.data.user;
-
-    setUser(userData);
-
-    return userData;
   };
 
   // Logout
@@ -79,6 +108,7 @@ export const AuthProvider = ({ children }) => {
         error.response?.data?.message || error.message
       );
     } finally {
+      sessionStorage.removeItem('token');
       setUser(null);
     }
   };

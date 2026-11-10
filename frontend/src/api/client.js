@@ -15,24 +15,29 @@ const api = axios.create({
   timeout: 30000,
 });
 
-// Response interceptor
+// Attach authentication token to every request
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('token');
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Handle API responses
 api.interceptors.response.use(
   (response) => response.data,
-
   (error) => {
-    const status = error.response?.status;
-
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      'An unexpected error occurred';
-
     console.error('API Error:', {
       url: error.config?.url,
-      method: error.config?.method,
-      status,
-      message,
-      response: error.response?.data,
+      status: error.response?.status,
+      message:
+        error.response?.data?.message || error.message,
     });
 
     return Promise.reject(error);
