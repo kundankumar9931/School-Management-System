@@ -450,7 +450,7 @@ export const LandingPage = () => {
                         <span className="text-xs font-medium">Fee Collection</span>
                         <CreditCard size={16} className="text-amber-400" />
                       </div>
-                      <span className="text-2xl font-extrabold text-white">184,250</span>
+                      <span className="text-2xl font-extrabold text-white">₹184,250</span>
                       <span className="text-[11px] text-blue-400 block mt-1">Reconciled ledger</span>
                     </div>
                   </div>
