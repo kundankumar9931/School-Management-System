@@ -450,7 +450,7 @@ export const LandingPage = () => {
                         <span className="text-xs font-medium">Fee Collection</span>
                         <CreditCard size={16} className="text-amber-400" />
                       </div>
-                      <span className="text-2xl font-extrabold text-white">$184,250</span>
+                      <span className="text-2xl font-extrabold text-white">184,250</span>
                       <span className="text-[11px] text-blue-400 block mt-1">Reconciled ledger</span>
                     </div>
                   </div>
@@ -468,7 +468,7 @@ export const LandingPage = () => {
                             LS
                           </div>
                           <div>
-                            <span className="font-semibold text-white block">Lucas Smith</span>
+                            <span className="font-semibold text-white block">Rahul jha</span>
                             <span className="text-[10px] text-slate-400">ADM-2025-0104 • Grade 10-A</span>
                           </div>
                         </div>
@@ -482,7 +482,7 @@ export const LandingPage = () => {
                             ES
                           </div>
                           <div>
-                            <span className="font-semibold text-white block">Emma Smith</span>
+                            <span className="font-semibold text-white block">Kundan kumar</span>
                             <span className="text-[10px] text-slate-400">ADM-2025-0105 • Grade 9-B</span>
                           </div>
                         </div>
@@ -496,7 +496,7 @@ export const LandingPage = () => {
                             OD
                           </div>
                           <div>
-                            <span className="font-semibold text-white block">Oliver Davis</span>
+                            <span className="font-semibold text-white block">Sachin singh</span>
                             <span className="text-[10px] text-slate-400">ADM-2025-0109 • Grade 10-A</span>
                           </div>
                         </div>
