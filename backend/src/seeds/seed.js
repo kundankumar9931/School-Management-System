@@ -121,6 +121,30 @@ export const seedDatabase = async () => {
     status: 'active',
   });
 
+  // Dedicated Restricted Demo Users
+  const passwordHashDemo = await bcrypt.hash('DemoRestricted@2026', 10);
+  const demoAdminUser = await User.create({
+    email: 'demo.admin@algions.edu',
+    passwordHash: passwordHashDemo,
+    role: 'admin',
+    status: 'active',
+    isDemo: true,
+  });
+  const demoTeacherUser = await User.create({
+    email: 'demo.teacher@algions.edu',
+    passwordHash: passwordHashDemo,
+    role: 'teacher',
+    status: 'active',
+    isDemo: true,
+  });
+  const demoGuardianUser = await User.create({
+    email: 'demo.guardian@algions.edu',
+    passwordHash: passwordHashDemo,
+    role: 'guardian',
+    status: 'active',
+    isDemo: true,
+  });
+
   console.log('[Seeder] Creating Teacher Profiles...');
   const teacher1 = await Teacher.create({
     userId: teacherUser1._id,
@@ -318,6 +342,34 @@ export const seedDatabase = async () => {
       $addToSet: { linkedStudentIds: student._id },
     });
   }
+
+  // Create Demo Teacher and Demo Guardian profiles
+  const demoTeacher = await Teacher.create({
+    userId: demoTeacherUser._id,
+    employeeId: 'DEMO-FAC-01',
+    fullName: 'Prof. David Vance (Guest Faculty)',
+    email: 'demo.teacher@algions.edu',
+    phone: '+1 555-0199',
+    qualification: 'M.Sc. Physics, Ed.D.',
+    experienceYears: 12,
+    department: 'Sciences',
+  });
+
+  await TeacherAssignment.insertMany([
+    { teacherId: demoTeacher._id, classId: class10._id, sectionId: sec10A._id, subjectId: subSci._id, academicYear: '2025-2026' },
+    { teacherId: demoTeacher._id, classId: class9._id, sectionId: sec9A._id, subjectId: subSci._id, academicYear: '2025-2026' },
+  ]);
+
+  await Guardian.create({
+    userId: demoGuardianUser._id,
+    fullName: 'Morgan Sterling (Guest Guardian)',
+    email: 'demo.guardian@algions.edu',
+    phone: '+1 555-0299',
+    relationship: 'Parent',
+    address: '42 Campus Boulevard, Springfield',
+    occupation: 'Software Engineer',
+    linkedStudentIds: [createdStudents[0]._id, createdStudents[1]._id],
+  });
 
   console.log('[Seeder] Creating Attendance Records...');
   // Generate attendance for past 5 weekdays for Grade 10 Section A

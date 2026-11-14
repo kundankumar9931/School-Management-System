@@ -33,6 +33,9 @@ export const authenticate = async (req, res, next) => {
     }
 
     req.user = user;
+    if (user.isDemo || decoded?.isDemo) {
+      req.user.isDemo = true;
+    }
 
     // Attach role-specific persona profiles for downstream access control
     if (user.role === 'teacher') {
@@ -41,6 +44,24 @@ export const authenticate = async (req, res, next) => {
     } else if (user.role === 'guardian') {
       const guardian = await Guardian.findOne({ userId: user._id });
       req.guardian = guardian;
+    }
+
+    // Enforce strict read-only restrictions on demo accounts
+    if (req.user.isDemo && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+      const isDemoAuthPath =
+        req.path === '/demo' ||
+        req.path === '/logout' ||
+        req.originalUrl?.includes('/auth/logout') ||
+        req.originalUrl?.includes('/auth/demo');
+
+      if (!isDemoAuthPath) {
+        return sendError(
+          res,
+          'Demo mode is read-only. Modifying, creating, or deleting records is disabled to protect school data.',
+          [],
+          403
+        );
+      }
     }
 
     next();

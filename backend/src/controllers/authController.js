@@ -33,6 +33,27 @@ export const authController = {
     }
   },
 
+  // Demo access for guests / visitors
+  async demo(req, res, next) {
+    try {
+      const { role = 'admin' } = req.body || {};
+
+      const { token, user } = await authService.demoLogin({
+        role,
+        req,
+      });
+
+      res.cookie('token', token, COOKIE_OPTIONS);
+
+      return sendSuccess(res, 'Demo session initialized successfully', {
+        token,
+        user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // Logout user
   async logout(req, res) {
     res.clearCookie('token', {

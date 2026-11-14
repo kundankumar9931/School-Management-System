@@ -98,6 +98,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Demo Login (restricted guest access)
+  const demoLogin = async (role = 'admin') => {
+    try {
+      const result = await api.post('/auth/demo', { role });
+
+      if (!result.success || !result.data?.token || !result.data?.user) {
+        throw new Error(result.message || 'Demo session initialization failed');
+      }
+
+      const { token, user: userData } = result.data;
+
+      sessionStorage.setItem('token', token);
+      setUser(userData);
+
+      return userData;
+    } catch (error) {
+      sessionStorage.removeItem('token');
+      throw new Error(
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to start demo session'
+      );
+    }
+  };
+
   // Logout
   const logout = async () => {
     try {
@@ -130,6 +155,7 @@ export const AuthProvider = ({ children }) => {
         user,
         loading,
         login,
+        demoLogin,
         logout,
         isAuthenticated: !!user,
         hasRole,
@@ -146,7 +172,7 @@ export const useAuth = () => {
 
   if (!context) {
     throw new Error(
-      'useAuth must be used within an AuthProvider'
+      'useAuth must be used within an AuthProvider' 
     );
   }
 

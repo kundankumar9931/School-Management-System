@@ -33,6 +33,7 @@ export const Navbar = () => {
           }`}
         >
           {roleLabels[user?.role] || user?.role}
+          {user?.isDemo && ' (Demo)'}
         </span>
 
         {/* User Info */}

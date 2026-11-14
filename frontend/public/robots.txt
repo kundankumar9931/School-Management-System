@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /demo
+
+# Disallow private application routes, administration, and internal APIs
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /teacher
+Disallow: /teacher/*
+Disallow: /guardian
+Disallow: /guardian/*
+Disallow: /api
+Disallow: /api/*
+Disallow: /unauthorized
+
+Sitemap: https://school-management-system-9ztq.onrender.com/sitemap.xml

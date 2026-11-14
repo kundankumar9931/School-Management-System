@@ -6,6 +6,7 @@ import { FormInput } from '../../components/common/FormInput.jsx';
 import {
   School,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
   GraduationCap,
   HeartHandshake,
@@ -16,6 +17,7 @@ import {
   BookOpen,
   Stars,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export const LoginPage = () => {
@@ -100,6 +102,17 @@ export const LoginPage = () => {
 
       {/* Main content */}
       <div className="relative z-10 w-full max-w-lg">
+
+        {/* Back to Home Link */}
+        <div className="mb-6 flex justify-start">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition group px-3 py-1.5 rounded-lg hover:bg-white/5"
+          >
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+            <span>Back to Algions Academy</span>
+          </Link>
+        </div>
 
         {/* Branding */}
         <div className="text-center mb-8">
@@ -256,6 +269,19 @@ export const LoginPage = () => {
               <span className="text-xs">
                 Secure access for authorized school users
               </span>
+            </div>
+
+            {/* Demo Sandbox Quick Link */}
+            <div className="mt-4 pt-4 border-t border-white/5 text-center">
+              <p className="text-xs text-slate-400 mb-2.5">Visiting without credentials?</p>
+              <Link
+                to="/demo"
+                className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-400/30 hover:border-blue-400/50 transition-all duration-200"
+              >
+                <Sparkles size={14} className="text-blue-400" />
+                <span>Explore Interactive Demo Sandbox</span>
+                <ArrowRight size={14} />
+              </Link>
             </div>
           </div>
 

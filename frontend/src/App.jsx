@@ -5,6 +5,8 @@ import { ProtectedRoute } from './components/common/ProtectedRoute.jsx';
 import { DashboardLayout } from './components/layout/DashboardLayout.jsx';
 
 // Public Pages
+import { LandingPage } from './pages/public/LandingPage.jsx';
+import { DemoPage } from './pages/public/DemoPage.jsx';
 import { LoginPage } from './pages/public/LoginPage.jsx';
 import { UnauthorizedPage, NotFoundPage } from './pages/public/NotFoundPage.jsx';
 
@@ -33,24 +35,14 @@ import { TeacherMarksPage } from './pages/teacher/TeacherMarksPage.jsx';
 import { GuardianOverview, GuardianResultsPage } from './pages/guardian/GuardianOverview.jsx';
 import { GuardianAttendancePage, GuardianFeesPage } from './pages/guardian/GuardianAttendancePage.jsx';
 
-// Root Redirector based on user role
-const RootRedirect = () => {
-  const { user, isAuthenticated, loading } = useAuth();
-  if (loading) return null;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (user?.role === 'admin') return <Navigate to="/admin" replace />;
-  if (user?.role === 'teacher') return <Navigate to="/teacher" replace />;
-  if (user?.role === 'guardian') return <Navigate to="/guardian" replace />;
-  return <Navigate to="/login" replace />;
-};
-
 export const App = () => {
   return (
     <Routes>
       {/* Public Routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/demo" element={<DemoPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-      <Route path="/" element={<RootRedirect />} />
 
       {/* Admin Portal */}
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>

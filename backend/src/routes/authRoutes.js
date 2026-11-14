@@ -7,6 +7,7 @@ import { loginSchema } from '../validators/schemas.js';
 const router = Router();
 
 router.post('/login', validateRequest(loginSchema), authController.login);
+router.post('/demo', authController.demo);
 router.post('/logout', authController.logout);
 router.get('/me', authenticate, authController.me);
 
